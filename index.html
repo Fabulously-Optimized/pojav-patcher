@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <p>1. Download FO ZIP: <a href="https://fabulously-optimized.github.io/mrpack-to-zip/?project=fo" target="_blank">latest</a> | <a href="https://fabulously-optimized.github.io/mrpack-to-zip/" target="_blank">other versions</a> (manual)</p>
+    <p>2. Insert FO zip here: <input type="file" id="foZip" accept=".zip"></p>
+    <p>3. Download patches for Pojav: <a href="https://minhaskamal.github.io/DownGit/#/home?url=https://github.com/Fabulously-Optimized/fabulously-optimized/tree/pojav/PojavLauncher/1.19.4" target="_blank">1.19.4</a> | <a href="https://minhaskamal.github.io/DownGit/#/home?url=https://github.com/Fabulously-Optimized/fabulously-optimized/tree/pojav/PojavLauncher/1.20.1" target="_blank">1.20.1</a></p>
+    <p>4. Insert patches zip here: <input type="file" id="pojavZip" accept=".zip"></p>
+    <p>5. <button onclick="mergeZipFiles()">Merge and download</button></p>
+    <script src="./jszip.min.js"></script>
+    <script src="./jszip-utils.min.js"></script>
+    <script>
+        async function mergeZipFiles() {
+            let foZipFile = document.getElementById('foZip').files[0];
+            let foZip = await JSZip.loadAsync(foZipFile);
+            let pojavZip = await JSZip.loadAsync(document.getElementById('pojavZip').files[0]);
+
+            var versionNumberFolder = Object.keys(pojavZip.files)[0];
+            var versionNumberFiles = pojavZip.folder(versionNumberFolder);
+
+            versionNumberFiles.forEach(function (relativePath, file) {
+                var newRelativePath = relativePath.replace(`${versionNumberFolder}/`, '');
+                if (!file.dir) {
+                    foZip.file(newRelativePath, file.async('arraybuffer'));
+                }
+            });
+
+            foZip.remove(versionNumberFolder);
+
+            foZip.generateAsync({
+                type: 'blob'
+            }).then(function (content) {
+                var outputFileName = foZipFile.name.replace('.zip', '-pojav.zip');
+                var link = document.createElement('a');
+                link.href = URL.createObjectURL(content);
+                link.download = outputFileName;
+                link.dispatchEvent(new MouseEvent('click'));
+            });
+        }
+    </script>
+</body>
+
+</html>
