@@ -1,3 +1,3 @@
-# Pojav-patcher
+# Pojav patcher
 
-Patch downloadable zips with Pojav changes. See FO install instructions for more info.
+Patch downloadable FO zips with Pojav changes. See FO install instructions for more info.
